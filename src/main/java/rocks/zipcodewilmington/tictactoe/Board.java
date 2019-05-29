@@ -27,39 +27,25 @@ public class Board {
 
     public String getWinner() {
         String winner = "";
-        Character[][] flatBoard = getFlatBoard();
-        for (Character[] set : flatBoard) {
-            winner = winningSet(set);
-            if (!(winner.equals(""))) return winner;
+        Character[] downDiagonal = {board[0][2], board[1][1], board[2][0]};
+        winner = winningSet(downDiagonal);
+        if (!winner.equals("")) return winner;
+        Character[] upDiagonal = {board[0][0], board[1][1], board[2][2]};
+        winner = winningSet(upDiagonal);
+        if (!winner.equals("")) return winner;
+        for (int i = 0; i < board.length; i++) {
+            winner = winningSet(board[i]);
+            if (!winner.equals("")) return winner;
+            Character[] col = new Character[board.length];
+            for(int j = 0; j < board.length; j++) {
+                col[j] = board[j][i];
+            }
+            winner = winningSet(col);
+            if (!winner.equals("")) return winner;
         }
         return winner;
     }
 
-    private Character[][] getFlatBoard() {
-        ArrayList<Character[]> flattened = new ArrayList<Character[]>();
-        Character[] downDiagonal = new Character[this.board.length];
-        Character[] upDiagonal = new Character[this.board.length];
-        int upCount = 0;
-        int downCount = this.board.length-1;
-        for (int i = 0; i < this.board.length; i++) {
-            Character[] col = new Character[this.board.length];
-            flattened.add(this.board[i]);
-            for (int j = 0; j < this.board.length; j++) {
-                col[j] = this.board[i][j];
-                if (i == j) {
-                    downDiagonal[downCount] = this.board[i][j];
-                    upDiagonal[upCount] = this.board[i][j];
-                    upCount++;
-                    downCount--;
-                }
-            }
-            flattened.add(col);
-        }
-        flattened.add(upDiagonal);
-        flattened.add(downDiagonal);
-        Character[][] flat = new Character[flattened.size()][this.board.length];
-        return flattened.toArray(flat);
-    }
 
     private String winningSet(Character[] moves) {
         int xCount = 0;
@@ -71,9 +57,9 @@ public class Board {
                 oCount++;
             }
         }
-        if (xCount == this.board.length) {
+        if (xCount == 3) {
             return "X";
-        } else if (oCount == this.board.length) {
+        } else if (oCount == 3) {
             return "O";
         }
         return "";
